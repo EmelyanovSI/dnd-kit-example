@@ -47,8 +47,8 @@ export default function App() {
         <SortableWrapper items={parentItems} onDragEnd={handleParentDragEnd}>
             {parentItems.map((parentItem) => (
                 <SortableItem key={parentItem.id} id={parentItem.id}>
-                    <DragHandle />
                     <div style={{ background: 'blue', margin: '5px', padding: '5px' }}>
+                        <DragHandle />
                         parent {parentItem.number}
                         <SortableWrapper
                             items={parentItem.childElements}
@@ -56,8 +56,8 @@ export default function App() {
                         >
                             {parentItem.childElements.map((childItem) => (
                                 <SortableItem key={childItem.id} id={childItem.id}>
-                                    <DragHandle />
                                     <div style={{ background: 'red', margin: '5px' }}>
+                                        <DragHandle />
                                         child {childItem.number}
                                     </div>
                                 </SortableItem>
