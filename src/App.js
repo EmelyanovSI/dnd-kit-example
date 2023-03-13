@@ -4,6 +4,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 import SortableWrapper from './SortableWrapper';
 import { SortableItem } from './SortableItem';
 import { parentElements } from './elements';
+import { DragHandle } from './DragHandle';
 
 export default function App() {
     const [parentItems, setParentItems] = useState(parentElements);
@@ -46,14 +47,16 @@ export default function App() {
         <SortableWrapper items={parentItems} onDragEnd={handleParentDragEnd}>
             {parentItems.map((parentItem) => (
                 <SortableItem key={parentItem.id} id={parentItem.id}>
+                    <DragHandle />
                     <div style={{ background: 'blue', margin: '5px', padding: '5px' }}>
-                        child {parentItem.number}
+                        parent {parentItem.number}
                         <SortableWrapper
                             items={parentItem.childElements}
                             onDragEnd={(event) => handleChildDragEnd(event, parentItem.id)}
                         >
                             {parentItem.childElements.map((childItem) => (
                                 <SortableItem key={childItem.id} id={childItem.id}>
+                                    <DragHandle />
                                     <div style={{ background: 'red', margin: '5px' }}>
                                         child {childItem.number}
                                     </div>
