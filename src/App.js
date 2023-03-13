@@ -1,36 +1,12 @@
 import React, { useState } from 'react';
-import {
-    arrayMove,
-    SortableContext,
-    sortableKeyboardCoordinates,
-    verticalListSortingStrategy
-} from '@dnd-kit/sortable';
-import {
-    closestCenter,
-    DndContext,
-    KeyboardSensor,
-    PointerSensor,
-    useSensor,
-    useSensors
-} from '@dnd-kit/core';
+import { arrayMove } from '@dnd-kit/sortable';
 
+import SortableWrapper from './SortableWrapper';
 import { SortableItem } from './SortableItem';
 import { parentElements } from './elements';
 
 export default function App() {
     const [parentItems, setParentItems] = useState(parentElements);
-    const sensors = useSensors(
-        useSensor(PointerSensor),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates
-        })
-    );
-    const childSensors = useSensors(
-        useSensor(PointerSensor),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates
-        })
-    );
 
     function handleParentDragEnd(event) {
         const { active, over } = event;
@@ -67,41 +43,26 @@ export default function App() {
     }
 
     return (
-        <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleParentDragEnd}
-        >
-            <SortableContext
-                items={parentItems}
-                strategy={verticalListSortingStrategy}
-            >
-                {parentItems.map((parentItem) => (
-                    <SortableItem key={parentItem.id} id={parentItem.id}>
-                        <div style={{ background: 'blue', margin: '5px', padding: '5px' }}>
-                            child {parentItem.number}
-                            <DndContext
-                                sensors={childSensors}
-                                collisionDetection={closestCenter}
-                                onDragEnd={(event) => handleChildDragEnd(event, parentItem.id)}
-                            >
-                                <SortableContext
-                                    items={parentItem.childElements}
-                                    strategy={verticalListSortingStrategy}
-                                >
-                                    {parentItem.childElements.map((childItem) => (
-                                        <SortableItem key={childItem.id} id={childItem.id}>
-                                            <div style={{ background: 'red', margin: '5px' }}>
-                                                child {childItem.number}
-                                            </div>
-                                        </SortableItem>
-                                    ))}
-                                </SortableContext>
-                            </DndContext>
-                        </div>
-                    </SortableItem>
-                ))}
-            </SortableContext>
-        </DndContext>
+        <SortableWrapper items={parentItems} onDragEnd={handleParentDragEnd}>
+            {parentItems.map((parentItem) => (
+                <SortableItem key={parentItem.id} id={parentItem.id}>
+                    <div style={{ background: 'blue', margin: '5px', padding: '5px' }}>
+                        child {parentItem.number}
+                        <SortableWrapper
+                            items={parentItem.childElements}
+                            onDragEnd={(event) => handleChildDragEnd(event, parentItem.id)}
+                        >
+                            {parentItem.childElements.map((childItem) => (
+                                <SortableItem key={childItem.id} id={childItem.id}>
+                                    <div style={{ background: 'red', margin: '5px' }}>
+                                        child {childItem.number}
+                                    </div>
+                                </SortableItem>
+                            ))}
+                        </SortableWrapper>
+                    </div>
+                </SortableItem>
+            ))}
+        </SortableWrapper>
     );
 }
